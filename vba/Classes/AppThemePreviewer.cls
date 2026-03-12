@@ -20,13 +20,13 @@ Private PreviousSelection As PowerPoint.Selection
 Private Const ORIGINAL_THEME_FILE_NAME As String = "OriginalTheme.thmx"
 
 
-Private Sub •00InstatiationProcedures():                                                                            End Sub
+Private Sub â€¢00InstatiationProcedures():                                                                            End Sub
 
-Private Sub •00EventsProcedures():                                                                                  End Sub
+Private Sub â€¢00EventsProcedures():                                                                                  End Sub
 
-Private Sub •00PublicProcedures():                                                                                  End Sub
+Private Sub â€¢00PublicProcedures():                                                                                  End Sub
 
-Private Sub •00FriendProcedures():                                                                                  End Sub
+Private Sub â€¢00FriendProcedures():                                                                                  End Sub
 
 Friend Sub PreviewTheme()
     ActiveWindow.Selection.Unselect
@@ -138,7 +138,7 @@ Private Sub ResetValuesForLayoutFlow()
     App.CurrentSlideIndex = 0
 End Sub
 
-Private Sub •00PrivateProcedures():                                                                                 End Sub
+Private Sub â€¢00PrivateProcedures():                                                                                 End Sub
 
 Private Sub DeleteWorkingEnvironment()
 
@@ -220,7 +220,7 @@ Private Sub SetDefultShapesInCurrentTheme(Master As PowerPoint.Master)
     PowerPointUtilities.SetMastersDefaultShape App.DefaultThemeLine, Master
 End Sub
 
-Private Sub •00PythonSection():                                                                          End Sub
+Private Sub â€¢00PythonSection():                                                                          End Sub
 
 Private Function PythonLibraryIsInstalled() As Boolean
     Dim ShellObject As Object
@@ -428,7 +428,11 @@ End Sub
 Private Function GetStoredLanguageId() As MsoLanguageID
 
     Dim StoredValue As String
-    StoredValue = ActivePresentation.Slides(1).Shapes("LanguageID").TextFrame.TextRange.Text
+    StoredValue = ActivePresentation.Slides(1).Shapes("LanguageTextbox").AlternativeText
+
+    If Len(StoredValue) = 0 Then
+        StoredValue = CStr(ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
+    End If
 
     GetStoredLanguageId = CLng(StoredValue)
 
