@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Const IS_IN_DESIGN As Boolean = True
+Private Const POINTS_PER_INCH As Double = 72#
 
 Const DefaultHeading = "Nunc viverra imperdiet enim"
 Const DefaultBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -37,6 +38,7 @@ Private m_CurrentSlideIndex As Integer
 Private m_IsFirstBackgroundCopyExecution As Boolean
 Private m_HasPendingWork As Boolean
 Private m_ShouldIgnoreComplexBackgrounds As Boolean
+Private m_PreviousSingleSelection As PowerPoint.Shape
 
 
 Friend Property Get Self() As App
@@ -165,12 +167,93 @@ End Sub
 Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
     User.AddSelection Sel
 
+    HandleSlideProportionSampleUpdateOnSelectionChange Sel
+
     MakeLanguageSectionDecision
     MakeFontsSectionDecisions
     MakeColorSectionDecisions
     MakeEffectSectionDecisions
     MakeResultSectionDecisions
 
+    UpdatePreviousSingleSelection Sel
+End Sub
+
+Private Property Get PreviousSingleSelection() As PowerPoint.Shape
+    Set PreviousSingleSelection = m_PreviousSingleSelection
+End Property
+
+Private Sub HandleSlideProportionSampleUpdateOnSelectionChange(ByVal CurrentSelection As PowerPoint.Selection)
+    If Not WasSlideProportionSampleDeselected(CurrentSelection) Then Exit Sub
+
+    ResizeSlideProportionSample
+End Sub
+
+Private Function WasSlideProportionSampleDeselected(ByVal CurrentSelection As PowerPoint.Selection) As Boolean
+    On Error GoTo CleanFail
+
+    WasSlideProportionSampleDeselected = _
+        Not PreviousSingleSelection Is Nothing And _
+        PreviousSingleSelection.Name = "SlideProportionSample" And _
+        Not IsSelectionOnNamedShape(CurrentSelection, "SlideProportionSample")
+    Exit Function
+
+CleanFail:
+    WasSlideProportionSampleDeselected = False
+End Function
+
+Private Function IsSelectionOnNamedShape(ByVal Selection As PowerPoint.Selection, ByVal ShapeName As String) As Boolean
+    On Error GoTo CleanFail
+
+    If Selection Is Nothing Then Exit Function
+
+    If Selection.Type <> ppSelectionShapes And Selection.Type <> ppSelectionText Then Exit Function
+    If Selection.ShapeRange.count <> 1 Then Exit Function
+
+    IsSelectionOnNamedShape = (Selection.ShapeRange(1).Name = ShapeName)
+    Exit Function
+
+CleanFail:
+    IsSelectionOnNamedShape = False
+End Function
+
+Private Sub UpdatePreviousSingleSelection(ByVal CurrentSelection As PowerPoint.Selection)
+    On Error GoTo CleanFail
+
+    Set m_PreviousSingleSelection = Nothing
+
+    If CurrentSelection Is Nothing Then Exit Sub
+    If CurrentSelection.Type <> ppSelectionShapes And CurrentSelection.Type <> ppSelectionText Then Exit Sub
+    If CurrentSelection.ShapeRange.count <> 1 Then Exit Sub
+
+    Set m_PreviousSingleSelection = CurrentSelection.ShapeRange(1)
+    Exit Sub
+
+CleanFail:
+    Set m_PreviousSingleSelection = Nothing
+End Sub
+
+Private Sub ResizeSlideProportionSample()
+    On Error GoTo CleanFail
+
+    Dim WidthPixels As Double: WidthPixels = CDbl(Slide.Shapes("MasterWidth").TextFrame.TextRange.Text)
+    Dim HeightPixels As Double: HeightPixels = CDbl(Slide.Shapes("MasterHeight").TextFrame.TextRange.Text)
+    If HeightPixels = 0 Then Exit Sub
+
+    Dim TargetShape As PowerPoint.Shape
+    Set TargetShape = Slide.Shapes("SlideProportionSample")
+
+    Dim FixedLeft As Double: FixedLeft = TargetShape.Left
+    Dim FixedTop As Double: FixedTop = TargetShape.Top
+
+    TargetShape.LockAspectRatio = msoFalse
+    TargetShape.Height = POINTS_PER_INCH
+    TargetShape.Width = POINTS_PER_INCH * (WidthPixels / HeightPixels)
+    TargetShape.Left = FixedLeft
+    TargetShape.Top = FixedTop
+
+    Exit Sub
+
+CleanFail:
 End Sub
 
 Public Property Get ThemeFileNameInTemp() As String
@@ -1525,4 +1608,3 @@ Private Sub HandleLayoutClick(ByVal Sel As Selection)
     App.IsWaitingForLayoutClick = False
     SyncLayoutsFromSampleSlidesShapesAndPlaceholders
 End Sub
-
