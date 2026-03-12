@@ -61,9 +61,9 @@ Public Property Get ActivePresentationInstance() As Presentation
 End Property
 
 
-Private Sub ï000PastFeatures():                                                                             End Sub
+Private Sub ‚Ä¢000PastFeatures():                                                                             End Sub
 
-'Permite usarse un tipo de letra que no est· en Office solo con escribir los nombres de las fuentes en los cuadros de texto adecuados
+'Permite usarse un tipo de letra que no est√° en Office solo con escribir los nombres de las fuentes en los cuadros de texto adecuados
 
 'Make it create a OOXML theme and NOTHING else
 'The created theme should
@@ -81,17 +81,17 @@ Private Sub ï000PastFeatures():                                                 
 
 'Make sure the first column in the shapes gallery is more useful than black and white... Maybe remap colors using the OOXML? ClrMap
 
-'Los efectos que hacen que las formas cambien de color deberÌan cambiarse
+'Los efectos que hacen que las formas cambien de color deber√≠an cambiarse
 
 'Permitir nombrar los colores personalizados
 
-'Los colores de hipervÌnculo e hipervÌnculo visitado no est·n bien en las paletas de colores
+'Los colores de hiperv√≠nculo e hiperv√≠nculo visitado no est√°n bien en las paletas de colores
 
 'La paleta principal del tema se puede perder al aplicar una paleta alternativa
-'Crear la paleta clara, la paleta clara en escala de grises, paleta oscura y paleta oscura escala de grises autom·ticamente y conceptuar otras lÌneas de negocio con otro tema aparte
+'Crear la paleta clara, la paleta clara en escala de grises, paleta oscura y paleta oscura escala de grises autom√°ticamente y conceptuar otras l√≠neas de negocio con otro tema aparte
 'Meter a coolors.co (abrir coolors.com/color1-color2-color3)?
 
-Private Sub ï001PresentFeatures():                                                                          End Sub
+Private Sub ‚Ä¢001PresentFeatures():                                                                          End Sub
 
 
 
@@ -102,7 +102,7 @@ Private Sub UpdateThumbnailsPreview()
     End With
 End Sub
 
-Private Sub ï002FutureFeatures():                                                                             End Sub
+Private Sub ‚Ä¢002FutureFeatures():                                                                             End Sub
 
 'Hacer que las variaciones de tono del mismo color para escoger no sean tan pocas, normalmente hay muchos blancos y muchos negros
 'Hacer que en la parte de resultado del tema se vean los nombres de las fuentes escogidas del tema
@@ -110,40 +110,40 @@ Private Sub ï002FutureFeatures():                                               
 
 'Calcular la paleta de colores de Office a partir de los colores principales de la marca junto con los colores neutros (blancos, grises, negros) usados por la marca
 'para que el usuario de la herramienta tenga que decidir menos cosas
-'Por ejemplo, para crear el tema para una marca como Coca-cola solo se deberÌa escoger... rojo... blanco, negro y posiblemente gris
-'y para crear el tema para una marca como Grada solo se deberÌa escoger... Violeta, Amarillo... blanco, negro y posiblemente gris
-'y para crear el tema para una marca como Uniformar solo se deberÌa escoger... Naranja, Verde, Turquesa.... blanco, negro y posiblemente gris
+'Por ejemplo, para crear el tema para una marca como Coca-cola solo se deber√≠a escoger... rojo... blanco, negro y posiblemente gris
+'y para crear el tema para una marca como Grada solo se deber√≠a escoger... Violeta, Amarillo... blanco, negro y posiblemente gris
+'y para crear el tema para una marca como Uniformar solo se deber√≠a escoger... Naranja, Verde, Turquesa.... blanco, negro y posiblemente gris
 'y se debe tomar en cuenta que para algunas marcas... el color mas oscuro a usar no es negro sino casi negro
 'es posible que para otra marcas el color mas claro a usar tmapoco sea blanco sino casi blanco
-'Pero la idea es que la herramienta calcule el resto de colores para crear una paleta de Office Ûptima
+'Pero la idea es que la herramienta calcule el resto de colores para crear una paleta de Office √≥ptima
 
 'ClrMap va a ser necesario para todas las paletas alternativas
 'Para una paleta oscura
 '<a:clrMap bg1="dk1" tx1="lt1" bg2="dk2" tx2="lt2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>
 'Para una paleta clara
 '<a:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>
-'HabrÌa que implemetar el mapeo en cada Texto alternativo de la forma que representa el color
-'Por tanto seria also como asÌ:
+'Habr√≠a que implemetar el mapeo en cada Texto alternativo de la forma que representa el color
+'Por tanto seria also como as√≠:
 '<a:clrMap bg1="PaletteColorA#.AltText" tx1="PaletteColorB#.AltText" bg2="PaletteColorC#.AltText" tx2="PaletteColorD#.AltText" accent1="PaletteColorE#.AltText"....
 
 'Y si se usa un HEX para ponerle nombre a los colores personalizados?
 
 'Allow the user to define the 9 text styles for text boxes or else create the theme with a useful set of text styles for each layout
-'Los 9 estilos pertenecen a cada textbox y no al tema o diseÒo o master
+'Los 9 estilos pertenecen a cada textbox y no al tema o dise√±o o master
 
 'Allow the user to choose the size of the slide that goes into the theme
 'Que el tema sirva para 4:3, 16:9 creando un super tema a partir de dos temas _
-    que tienen la particularidad de que entre ellos solo difieren por la configuraciÛn _
-    de la relaciÛn de aspecto de la presentaciÛn base (para uno es 4:3 y para el otro 16:9). _
-    Todo esto es ˙til solo para cuando se va a usar el super tema para crear una presentaciÛn en _
-    PowerPoint porque para las dem·s aplicaciones, tener distintas relaciones de aspecto no influye o modifica nada.
+    que tienen la particularidad de que entre ellos solo difieren por la configuraci√≥n _
+    de la relaci√≥n de aspecto de la presentaci√≥n base (para uno es 4:3 y para el otro 16:9). _
+    Todo esto es √∫til solo para cuando se va a usar el super tema para crear una presentaci√≥n en _
+    PowerPoint porque para las dem√°s aplicaciones, tener distintas relaciones de aspecto no influye o modifica nada.
     
 'Set default table if possible--- No se puede
 
 
-'Que si se usa el tema creado para crear una presentaciÛn haciendo click secundario y "Nuevo" entonces _
-    los custom Layouts sean tan ˙tiles y simples como los de Canva _
-    y no tan in˙tiles y complejos como los tÌpicos de PowerPoint. _
+'Que si se usa el tema creado para crear una presentaci√≥n haciendo click secundario y "Nuevo" entonces _
+    los custom Layouts sean tan √∫tiles y simples como los de Canva _
+    y no tan in√∫tiles y complejos como los t√≠picos de PowerPoint. _
     https://www.canva.com/design/DAFWn9gcI1M/MLSiYaGERBbk-D1ua92bhQ/edit
 'No, esto lo debe hacer la plantilla... No el tema... La plantilla idealmente debe ser basada en el tema... Pero esos detalles deben pertenecer a la plantilla
 
@@ -212,7 +212,7 @@ Private Sub MakeLanguageSectionDecision()
     End Select
     
     ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.Text = GetFullLanguageNameFromLanguageId(ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
-    ActivePresentation.Slides(1).Shapes("LanguageId").TextFrame.TextRange.Text = ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId
+    ActivePresentation.Slides(1).Shapes("LanguageTextbox").AlternativeText = CStr(ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
     
 End Sub
     
@@ -620,10 +620,10 @@ Friend Property Get BodySampleTextbox() As PowerPoint.Shape
     Set BodySampleTextbox = Slide.Shapes("BodySampleTextbox")
 End Property
 
-Private Sub ï01PublicProcedures():                                                                              End Sub
+Private Sub ‚Ä¢01PublicProcedures():                                                                              End Sub
 
 
-Private Sub ï02FriendProcedures():                                                                              End Sub
+Private Sub ‚Ä¢02FriendProcedures():                                                                              End Sub
 
 Friend Property Get PaletteShapes(ByVal Number As Integer) As PowerPoint.ShapeRange
     Set PaletteShapes = Slide.Shapes.Range((Array("PaletteColorA" & Number, "PaletteColorB" & Number, "PaletteColorC" & Number, _
@@ -899,7 +899,7 @@ Friend Property Get DesignSlide() As PowerPoint.Slide
 End Property
 
 
-Private Sub ï02PrivateProcedures():                                                                              End Sub
+Private Sub ‚Ä¢02PrivateProcedures():                                                                              End Sub
 
 Private Function GetEffectTypeFromShape(ByRef Shape As PowerPoint.Shape) As String
     Select Case True
