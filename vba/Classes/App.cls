@@ -207,6 +207,8 @@ End Property
 
 Private Sub MakeLanguageSectionDecision()
     Select Case True
+        Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, Slide.Shapes("LanguageTextbox"))
+            If User.CurrentSelection.Type = ppSelectionText Then Slide.Shapes("LanguageTextbox").Select
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, UpdateLanguageTextbox)
             Application.CommandBars.ExecuteMso "SetLanguage"
     End Select
@@ -1522,5 +1524,4 @@ Private Sub HandleLayoutClick(ByVal Sel As Selection)
     App.IsWaitingForLayoutClick = False
     SyncLayoutsFromSampleSlidesShapesAndPlaceholders
 End Sub
-
 
