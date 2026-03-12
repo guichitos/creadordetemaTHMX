@@ -165,6 +165,9 @@ Private Sub HostApp_WindowBeforeRightClick(ByVal Sel As Selection, Cancel As Boo
 End Sub
 
 Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
+    Dim PreviousSelection As PowerPoint.Selection
+    Set PreviousSelection = User.CurrentSelection
+
     User.AddSelection Sel
 
     UpdateSlideProportionSampleIfNeeded Sel
@@ -231,6 +234,63 @@ Private Sub UpdatePreviousSingleSelection(ByVal CurrentSelection As PowerPoint.S
 CleanFail:
     Set m_PreviousSingleSelection = Nothing
 End Sub
+
+Private Sub ResizeSlideProportionSample()
+    On Error GoTo CleanFail
+
+    Dim WidthPixels As Double: WidthPixels = CDbl(Slide.Shapes("MasterWidth").TextFrame.TextRange.Text)
+    Dim HeightPixels As Double: HeightPixels = CDbl(Slide.Shapes("MasterHeight").TextFrame.TextRange.Text)
+    If HeightPixels = 0 Then Exit Sub
+
+    Dim TargetShape As PowerPoint.Shape
+    Set TargetShape = Slide.Shapes("SlideProportionSample")
+
+    Dim FixedLeft As Double: FixedLeft = TargetShape.Left
+    Dim FixedTop As Double: FixedTop = TargetShape.Top
+
+    TargetShape.LockAspectRatio = msoFalse
+    TargetShape.Height = POINTS_PER_INCH
+    TargetShape.Width = POINTS_PER_INCH * (WidthPixels / HeightPixels)
+    TargetShape.Left = FixedLeft
+    TargetShape.Top = FixedTop
+
+    Exit Sub
+
+CleanFail:
+End Sub
+
+Private Sub UpdateSlideProportionSampleIfNeeded(ByVal PreviousSelection As PowerPoint.Selection, ByVal CurrentSelection As PowerPoint.Selection)
+    If Not WasSlideProportionSampleDeselected(PreviousSelection, CurrentSelection) Then Exit Sub
+
+    ResizeSlideProportionSample
+End Sub
+
+Private Function WasSlideProportionSampleDeselected(ByVal PreviousSelection As PowerPoint.Selection, ByVal CurrentSelection As PowerPoint.Selection) As Boolean
+    On Error GoTo CleanFail
+
+    WasSlideProportionSampleDeselected = _
+        IsSelectionOnNamedShape(PreviousSelection, "SlideProportionSample") And _
+        Not IsSelectionOnNamedShape(CurrentSelection, "SlideProportionSample")
+    Exit Function
+
+CleanFail:
+    WasSlideProportionSampleDeselected = False
+End Function
+
+Private Function IsSelectionOnNamedShape(ByVal Selection As PowerPoint.Selection, ByVal ShapeName As String) As Boolean
+    On Error GoTo CleanFail
+
+    If Selection Is Nothing Then Exit Function
+
+    If Selection.Type <> ppSelectionShapes And Selection.Type <> ppSelectionText Then Exit Function
+    If Selection.ShapeRange.count <> 1 Then Exit Function
+
+    IsSelectionOnNamedShape = (Selection.ShapeRange(1).Name = ShapeName)
+    Exit Function
+
+CleanFail:
+    IsSelectionOnNamedShape = False
+End Function
 
 Private Sub ResizeSlideProportionSample()
     On Error GoTo CleanFail
