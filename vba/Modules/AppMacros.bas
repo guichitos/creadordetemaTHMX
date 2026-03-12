@@ -9,14 +9,10 @@ Public g_Ribbon As IRibbonUI
 
 Sub RibbonOnLoad(ribbon As IRibbonUI)
     Set g_Ribbon = ribbon
-    If App Is Nothing Then Set App = New App
-    App.ShouldIgnoreComplexBackgrounds = False
-    App.IsWaitingForLayoutClick = False
-    App.CurrentSlideIndex = 0
 End Sub
 
 Public Sub LoadApp()
-    Set App = New App
+    EnsureAppInitialized
 End Sub
 
 Public Sub UnloadApp()
@@ -24,33 +20,37 @@ Public Sub UnloadApp()
 End Sub
 
 Sub PreviewApp(control As IRibbonControl)
-    If App Is Nothing Then Set App = New App
+    EnsureAppInitialized
     If ThemePreviewer Is Nothing Then Set ThemePreviewer = New AppThemePreviewer
     ThemePreviewer.PreviewTheme
     If App.IsWaitingForLayoutClick = True Then Exit Sub
 End Sub
 
 Sub CreateApp(control As IRibbonControl)
-    If App Is Nothing Then Set App = New App
+    EnsureAppInitialized
     If ThemeCreator Is Nothing Then Set ThemeCreator = New AppThemeCreator
     ThemeCreator.CreateTheme True
 End Sub
 
 Sub ApplyApp(control As IRibbonControl)
     
-    If App Is Nothing Then Set App = New App
+    EnsureAppInitialized
     If ThemeApplier Is Nothing Then Set ThemeApplier = New AppThemeApplier
     ThemeApplier.ApplyTheme
 End Sub
 
 Sub GetChkBackgroundPressed(control As IRibbonControl, ByRef returnedVal)
-    If App Is Nothing Then Set App = New App
+    If App Is Nothing Then
+        returnedVal = False
+        Exit Sub
+    End If
+
     returnedVal = App.ShouldIgnoreComplexBackgrounds
 End Sub
 
 Sub ChkBackgrounds_Click(control As IRibbonControl, pressed As Boolean)
 
-    If App Is Nothing Then Set App = New App
+    EnsureAppInitialized
     App.ShouldIgnoreComplexBackgrounds = pressed
     App.CurrentSlideIndex = 0
     App.IsWaitingForLayoutClick = False
@@ -68,7 +68,19 @@ Sub RefreshRibbon()
 
 End Sub
 Sub getEnabled(control As IRibbonControl, ByRef returnedVal)
-    If App Is Nothing Then Set App = New App
+    If App Is Nothing Then
+        returnedVal = False
+        Exit Sub
+    End If
+
     returnedVal = App.LayoutDesignHasComplexBackgrounds
 End Sub
 
+Private Sub EnsureAppInitialized()
+    If Not App Is Nothing Then Exit Sub
+
+    Set App = New App
+    App.ShouldIgnoreComplexBackgrounds = False
+    App.IsWaitingForLayoutClick = False
+    App.CurrentSlideIndex = 0
+End Sub
