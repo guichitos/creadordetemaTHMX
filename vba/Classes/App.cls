@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Const IS_IN_DESIGN As Boolean = True
+Private Const POINTS_PER_INCH As Double = 72#
 
 Const DefaultHeading = "Nunc viverra imperdiet enim"
 Const DefaultBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -165,12 +166,38 @@ End Sub
 Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
     User.AddSelection Sel
 
+
     MakeLanguageSectionDecision
     MakeFontsSectionDecisions
     MakeColorSectionDecisions
     MakeEffectSectionDecisions
     MakeResultSectionDecisions
 
+    ResizeSlideProportionSample
+End Sub
+
+Private Sub ResizeSlideProportionSample()
+    On Error GoTo CleanFail
+
+    Dim WidthPixels As Double: WidthPixels = CDbl(Slide.Shapes("MasterWidth").TextFrame.TextRange.Text)
+    Dim HeightPixels As Double: HeightPixels = CDbl(Slide.Shapes("MasterHeight").TextFrame.TextRange.Text)
+    If HeightPixels = 0 Then Exit Sub
+
+    Dim TargetShape As PowerPoint.Shape
+    Set TargetShape = Slide.Shapes("SlideProportionSample")
+
+    Dim FixedLeft As Double: FixedLeft = TargetShape.Left
+    Dim FixedTop As Double: FixedTop = TargetShape.Top
+
+    TargetShape.LockAspectRatio = msoFalse
+    TargetShape.Height = POINTS_PER_INCH
+    TargetShape.Width = POINTS_PER_INCH * (WidthPixels / HeightPixels)
+    TargetShape.Left = FixedLeft
+    TargetShape.Top = FixedTop
+
+    Exit Sub
+
+CleanFail:
 End Sub
 
 Public Property Get ThemeFileNameInTemp() As String
@@ -332,6 +359,7 @@ Private Sub MakeColorSectionDecisions()
         
         '/*
     End Select
+
 End Sub
 
 Private Sub UpdateBrandColorsPalette()
@@ -1525,4 +1553,3 @@ Private Sub HandleLayoutClick(ByVal Sel As Selection)
     App.IsWaitingForLayoutClick = False
     SyncLayoutsFromSampleSlidesShapesAndPlaceholders
 End Sub
-
