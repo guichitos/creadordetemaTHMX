@@ -165,6 +165,9 @@ Private Sub HostApp_WindowBeforeRightClick(ByVal Sel As Selection, Cancel As Boo
 End Sub
 
 Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
+    Dim PreviousSelection As PowerPoint.Selection
+    Set PreviousSelection = User.CurrentSelection
+
     User.AddSelection Sel
 
     HandleSlideProportionSampleUpdateOnSelectionChange Sel
