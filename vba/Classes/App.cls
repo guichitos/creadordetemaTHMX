@@ -11,6 +11,10 @@ Option Explicit
 
 Private Const IS_IN_DESIGN As Boolean = True
 Private Const POINTS_PER_INCH As Double = 72#
+Private Const CopyTransform As Integer = 0
+Private Const GrayScaleTransform As Integer = 1
+Private Const InvertLightnessTransform As Integer = 2
+Private Const InvertAndGrayScaleTransform As Integer = 3
 
 Const DefaultHeading = "Nunc viverra imperdiet enim"
 Const DefaultBody = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -526,14 +530,7 @@ End If
     End With
 End Sub
 
-Private Enum ExtraPaletteColorTransform
-    CopyTransform
-    GrayScaleTransform
-    InvertLightnessTransform
-    InvertAndGrayScaleTransform
-End Enum
-
-Private Sub SetAlternativePaletteExtraColors(ByVal PaletteNumber As Integer, ByVal Transform As ExtraPaletteColorTransform)
+Private Sub SetAlternativePaletteExtraColors(ByVal PaletteNumber As Integer, ByVal Transform As Integer)
     Dim SourceNames As Variant
     SourceNames = Array("PaletteColorM0", "PaletteColorN0", "PaletteColorO0", "PaletteColorP0", "PaletteColorQ0", "PaletteColorR0")
 
@@ -549,7 +546,7 @@ Private Sub SetAlternativePaletteExtraColors(ByVal PaletteNumber As Integer, ByV
     Next i
 End Sub
 
-Private Function TransformExtraColor(ByVal BaseColor As Long, ByVal Transform As ExtraPaletteColorTransform) As Long
+Private Function TransformExtraColor(ByVal BaseColor As Long, ByVal Transform As Integer) As Long
     Select Case Transform
         Case CopyTransform
             TransformExtraColor = LongColor(BaseColor).AsLong
@@ -562,7 +559,7 @@ Private Function TransformExtraColor(ByVal BaseColor As Long, ByVal Transform As
     End Select
 End Function
 
-Private Function GetTransformForPalette(ByVal PaletteNumber As Integer) As ExtraPaletteColorTransform
+Private Function GetTransformForPalette(ByVal PaletteNumber As Integer) As Integer
     Select Case PaletteNumber
         Case 1: GetTransformForPalette = CopyTransform
         Case 2: GetTransformForPalette = GrayScaleTransform
