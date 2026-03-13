@@ -38,6 +38,7 @@ Private m_CurrentSlideIndex As Integer
 Private m_IsFirstBackgroundCopyExecution As Boolean
 Private m_HasPendingWork As Boolean
 Private m_ShouldIgnoreComplexBackgrounds As Boolean
+Private m_PreviousSingleSelection As PowerPoint.Shape
 
 
 Friend Property Get Self() As App
@@ -164,6 +165,9 @@ Private Sub HostApp_WindowBeforeRightClick(ByVal Sel As Selection, Cancel As Boo
 End Sub
 
 Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
+    Dim PreviousSelection As PowerPoint.Selection
+    Set PreviousSelection = User.CurrentSelection
+
     User.AddSelection Sel
 
 
