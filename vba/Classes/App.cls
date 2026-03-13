@@ -322,6 +322,7 @@ Private Sub MakeColorSectionDecisions()
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x4thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x5thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x6thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
+        Case IsAPickedAccentColorShape(User.CurrentSelection):                                           PowerPointUtilities.ShowBackGroundFillColorPicker
 
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, HyperlinkTextBox)
             If User.CurrentSelection.Type = ppSelectionText Then HyperlinkTextBox.Select
@@ -381,6 +382,13 @@ Private Sub UpdateBrandColorsPalette()
     
     PaletteShapes(0)(11).Fill.ForeColor = HyperlinkTextBox.TextFrame.TextRange.Font.Color
     PaletteShapes(0)(12).Fill.ForeColor = VisitedHyperlinkTextBox.TextFrame.TextRange.Font.Color
+
+    Slide.Shapes("PaletteColorM0").Fill.ForeColor = Slide.Shapes("PickedAccentColor7").Fill.ForeColor
+    Slide.Shapes("PaletteColorN0").Fill.ForeColor = Slide.Shapes("PickedAccentColor8").Fill.ForeColor
+    Slide.Shapes("PaletteColorO0").Fill.ForeColor = Slide.Shapes("PickedAccentColor9").Fill.ForeColor
+    Slide.Shapes("PaletteColorP0").Fill.ForeColor = Slide.Shapes("PickedAccentColor10").Fill.ForeColor
+    Slide.Shapes("PaletteColorQ0").Fill.ForeColor = Slide.Shapes("PickedAccentColor11").Fill.ForeColor
+    Slide.Shapes("PaletteColorR0").Fill.ForeColor = Slide.Shapes("PickedAccentColor12").Fill.ForeColor
 End Sub
 
 Private Sub PutColorsInPickedColors()
@@ -1221,6 +1229,16 @@ Private Function IsACustomColor(ByRef Selection As PowerPoint.Selection) As Bool
     Next Shape
     
     IsACustomColor = Result
+End Function
+
+Private Function IsAPickedAccentColorShape(ByRef Selection As PowerPoint.Selection) As Boolean
+    Dim i As Long
+    For i = 7 To 12
+        If PowerPointUtilities.AreTheSameShape(Selection, Slide.Shapes("PickedAccentColor" & i)) Then
+            IsAPickedAccentColorShape = True
+            Exit Function
+        End If
+    Next i
 End Function
 
 Private Property Get LogoShape() As PowerPoint.Shape
