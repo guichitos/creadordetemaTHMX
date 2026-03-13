@@ -322,6 +322,7 @@ Private Sub MakeColorSectionDecisions()
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x4thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x5thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x6thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
+        Case IsAPickedAccentColorShape(User.CurrentSelection):                                           PowerPointUtilities.ShowBackGroundFillColorPicker
 
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, HyperlinkTextBox)
             If User.CurrentSelection.Type = ppSelectionText Then HyperlinkTextBox.Select
@@ -1221,6 +1222,16 @@ Private Function IsACustomColor(ByRef Selection As PowerPoint.Selection) As Bool
     Next Shape
     
     IsACustomColor = Result
+End Function
+
+Private Function IsAPickedAccentColorShape(ByRef Selection As PowerPoint.Selection) As Boolean
+    Dim i As Long
+    For i = 7 To 12
+        If PowerPointUtilities.AreTheSameShape(Selection, Slide.Shapes("PickedAccentColor" & i)) Then
+            IsAPickedAccentColorShape = True
+            Exit Function
+        End If
+    Next i
 End Function
 
 Private Property Get LogoShape() As PowerPoint.Shape
