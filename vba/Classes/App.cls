@@ -173,7 +173,7 @@ Private Sub HostApp_WindowSelectionChange(ByVal Sel As Selection)
     MakeEffectSectionDecisions
     MakeResultSectionDecisions
 
-    ResizeSlideProportionSample
+    ResizeSlideProportionSample   'Mantener actualización independiente del flujo de color
 End Sub
 
 Private Sub ResizeSlideProportionSample()
