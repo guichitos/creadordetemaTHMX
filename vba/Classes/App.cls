@@ -382,6 +382,13 @@ Private Sub UpdateBrandColorsPalette()
     
     PaletteShapes(0)(11).Fill.ForeColor = HyperlinkTextBox.TextFrame.TextRange.Font.Color
     PaletteShapes(0)(12).Fill.ForeColor = VisitedHyperlinkTextBox.TextFrame.TextRange.Font.Color
+
+    Slide.Shapes("PaletteColorM0").Fill.ForeColor = Slide.Shapes("PickedAccentColor7").Fill.ForeColor
+    Slide.Shapes("PaletteColorN0").Fill.ForeColor = Slide.Shapes("PickedAccentColor8").Fill.ForeColor
+    Slide.Shapes("PaletteColorO0").Fill.ForeColor = Slide.Shapes("PickedAccentColor9").Fill.ForeColor
+    Slide.Shapes("PaletteColorP0").Fill.ForeColor = Slide.Shapes("PickedAccentColor10").Fill.ForeColor
+    Slide.Shapes("PaletteColorQ0").Fill.ForeColor = Slide.Shapes("PickedAccentColor11").Fill.ForeColor
+    Slide.Shapes("PaletteColorR0").Fill.ForeColor = Slide.Shapes("PickedAccentColor12").Fill.ForeColor
 End Sub
 
 Private Sub PutColorsInPickedColors()
