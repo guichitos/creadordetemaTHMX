@@ -347,7 +347,8 @@ Private Sub MakeColorSectionDecisions()
             PaletteShapes(GetPaletteNumberFrom(User.CurrentSelection)).Visible = False
             Slide.Shapes("CopyCurrentColorPalette" & GetPaletteNumberFrom(User.CurrentSelection)).Visible = False
             
-        Case IsACopyCurrentColorPaletteButton(User.CurrentSelection):                                   SetAlternativePalette GetPaletteNumberFrom(User.CurrentSelection), BrandColorPalette
+        Case IsACopyCurrentColorPaletteButton(User.CurrentSelection)
+            CopyCurrentColorPaletteToAlternativePalette GetPaletteNumberFrom(User.CurrentSelection)
         Case IsAnAlternativePaletteColor(User.CurrentSelection):                                        PowerPointUtilities.ShowBackGroundFillColorPicker
         
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, ShowCustomColorsButton):        SetCustomColorsVisibility True
@@ -365,6 +366,11 @@ Private Sub MakeColorSectionDecisions()
         '/*
     End Select
 
+End Sub
+
+Private Sub CopyCurrentColorPaletteToAlternativePalette(ByVal PaletteNumber As Integer)
+    SetAlternativePalette PaletteNumber, BrandColorPalette
+    SetAlternativePaletteExtraColors PaletteNumber, GetTransformForPalette(PaletteNumber)
 End Sub
 
 Private Sub UpdateBrandColorsPalette()
@@ -553,6 +559,16 @@ Private Function TransformExtraColor(ByVal BaseColor As Long, ByVal Transform As
             TransformExtraColor = LongColor(BaseColor).InvertLightness.AsLong
         Case InvertAndGrayScaleTransform
             TransformExtraColor = LongColor(BaseColor).InvertLightness.ToGray.AsLong
+    End Select
+End Function
+
+Private Function GetTransformForPalette(ByVal PaletteNumber As Integer) As ExtraPaletteColorTransform
+    Select Case PaletteNumber
+        Case 1: GetTransformForPalette = CopyTransform
+        Case 2: GetTransformForPalette = GrayScaleTransform
+        Case 3: GetTransformForPalette = InvertLightnessTransform
+        Case 4: GetTransformForPalette = InvertAndGrayScaleTransform
+        Case Else: GetTransformForPalette = CopyTransform
     End Select
 End Function
 
