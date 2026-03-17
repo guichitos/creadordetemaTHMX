@@ -1,4 +1,5 @@
 Attribute VB_Name = "AppMacros"
+
 Option Explicit
 
 Public App As App
@@ -84,3 +85,4 @@ Private Sub EnsureAppInitialized()
     App.IsWaitingForLayoutClick = False
     App.CurrentSlideIndex = 0
 End Sub
+

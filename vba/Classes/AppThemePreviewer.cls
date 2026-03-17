@@ -17,16 +17,16 @@ Option Explicit
 
 Private PreviousSelection As PowerPoint.Selection
 
-Private Const ORIGINAL_THEME_FILE_NAME As String = "OriginalTheme.thmx"
+Private Const ORIGINAL_THEME_FILE_NAME As String = "Default theme.thmx"
 
 
-Private Sub â€¢00InstatiationProcedures():                                                                            End Sub
+Private Sub •00InstatiationProcedures():                                                                            End Sub
 
-Private Sub â€¢00EventsProcedures():                                                                                  End Sub
+Private Sub •00EventsProcedures():                                                                                  End Sub
 
-Private Sub â€¢00PublicProcedures():                                                                                  End Sub
+Private Sub •00PublicProcedures():                                                                                  End Sub
 
-Private Sub â€¢00FriendProcedures():                                                                                  End Sub
+Private Sub •00FriendProcedures():                                                                                  End Sub
 
 Friend Sub PreviewTheme()
     ActiveWindow.Selection.Unselect
@@ -38,27 +38,21 @@ Friend Sub PreviewTheme()
     ApplySlideSizeFromMaster
     ApplyDesiredFormatToAllDesignsUsingVba
     DeleteWorkingEnvironment
-    
     SaveToTemporaryFolderAsOriginalTheme
-    
     If Not PythonLibraryIsInstalled Then InstallPythonLibrary
-    
     CreateOfficeThemeBasedOnOriginalThemeAndCallItCustomThemeUsingPython
-    
     Dim PreviousDesignName As String: PreviousDesignName = App.Slide.Design.Name
-    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & "CustomTheme.thmx"
-    Debug.Print CustomThemePath
+    Dim PreviousSlidemaster As Design: Set PreviousSlidemaster = GetDesignByName(App.Presentation, PreviousDesignName)
+    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & ORIGINAL_THEME_FILE_NAME
+    PreviousSlidemaster.Preserved = msoFalse
     ClearNonPlaceholderShapesFromLayoutsInLayoutDesignSection 'Otherwise shapes in layouts are duplicated
     App.Presentation.ApplyTheme CustomThemePath
     ResetValuesForLayoutFlow
-    App.Slide.Design.Preserved = False 'Otherwise PowerPoint creates duplicates
-    App.Slide.Design.Name = PreviousDesignName
-    
     App.ThemeFontsHeadingsFontShape.TextFrame.TextRange.Text = App.HeadingsAlternativeFontNameTextbox.TextFrame.TextRange.Text
     App.ThemeFontsBodyFontShape.TextFrame.TextRange.Text = App.BodyAlternativeFontNameTextbox.TextFrame.TextRange.Text
-    RemoveBrandLogoImagesFromOriginaTheme 'Must be deleted
+    'RemoveBrandLogoImagesFromOriginalTheme 'Must be deleted
 End Sub
-Public Sub RemoveBrandLogoImagesFromOriginaTheme()
+Public Sub RemoveBrandLogoImagesFromOriginalTheme()
 
     On Error GoTo CleanExit
     If App Is Nothing Then Set App = New App
@@ -134,11 +128,11 @@ Private Sub RemoveBrandLogoImagesFromShape(ByVal TargetShape As Shape)
 
 CleanExit:
 End Sub
-Private Sub ResetValuesForLayoutFlow()
+Public Sub ResetValuesForLayoutFlow()
     App.CurrentSlideIndex = 0
 End Sub
 
-Private Sub â€¢00PrivateProcedures():                                                                                 End Sub
+Private Sub •00PrivateProcedures():                                                                                 End Sub
 
 Private Sub DeleteWorkingEnvironment()
 
@@ -220,7 +214,7 @@ Private Sub SetDefultShapesInCurrentTheme(Master As PowerPoint.Master)
     PowerPointUtilities.SetMastersDefaultShape App.DefaultThemeLine, Master
 End Sub
 
-Private Sub â€¢00PythonSection():                                                                          End Sub
+Private Sub •00PythonSection():                                                                          End Sub
 
 Private Function PythonLibraryIsInstalled() As Boolean
     Dim ShellObject As Object
@@ -356,12 +350,14 @@ End Function
 Private Function ConvertPixelsToPoints(ByVal Pixels As Double) As Double
     ConvertPixelsToPoints = Pixels * 72# / 96#
 End Function
+
 Private Sub ApplySlideSize(ByVal WidthPoints As Double, ByVal HeightPoints As Double)
     With ActivePresentation.PageSetup
         .SlideWidth = WidthPoints
         .SlideHeight = HeightPoints
     End With
 End Sub
+
 Private Function ConvertPointsToInches(ByVal Points As Double) As Double
     ConvertPointsToInches = Points / 72#
 End Function
@@ -437,3 +433,5 @@ Private Function GetStoredLanguageId() As MsoLanguageID
     GetStoredLanguageId = CLng(StoredValue)
 
 End Function
+
+
