@@ -249,8 +249,8 @@ Private Sub MakeLanguageSectionDecision()
             Application.CommandBars.ExecuteMso "SetLanguage"
     End Select
     
-    ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.Text = GetFullLanguageNameFromLanguageId(ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
-    ActivePresentation.Slides(1).Shapes("LanguageTextbox").AlternativeText = CStr(ActivePresentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
+    App.Presentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.Text = GetFullLanguageNameFromLanguageId(App.Presentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
+    App.Presentation.Slides(1).Shapes("LanguageTextbox").AlternativeText = CStr(App.Presentation.Slides(1).Shapes("LanguageTextbox").TextFrame.TextRange.LanguageId)
     
 End Sub
     

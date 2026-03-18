@@ -2,7 +2,7 @@ Attribute VB_Name = "aaTest"
 Public Sub ApplyPreviewThemeForTesting()
    
     'Dim PreviousDesignName As String: PreviousDesignName = App.Slide.Design.Name
-    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & "CustomTheme.thmx"
+    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & ORIGINAL_THEME_FILE_NAME
     Debug.Print CustomThemePath
     ClearNonPlaceholderShapesFromLayoutsInLayoutDesignSection 'Otherwise shapes in layouts are duplicated
     App.Presentation.ApplyTheme CustomThemePath

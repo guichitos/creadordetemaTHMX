@@ -17,7 +17,8 @@ Option Explicit
 
 Private PreviousSelection As PowerPoint.Selection
 
-Private Const ORIGINAL_THEME_FILE_NAME As String = "Default theme.thmx"
+Private Const ORIGINAL_THEME_FILE_NAME As String = "OriginalTheme.thmx"
+Private Const GENERATED_THEME_FILE_NAME As String = "Default theme.thmx"
 
 
 Private Sub •00InstatiationProcedures():                                                                            End Sub
@@ -43,7 +44,7 @@ Friend Sub PreviewTheme()
     CreateOfficeThemeBasedOnOriginalThemeAndCallItCustomThemeUsingPython
     Dim PreviousDesignName As String: PreviousDesignName = App.Slide.Design.Name
     Dim PreviousSlidemaster As Design: Set PreviousSlidemaster = GetDesignByName(App.Presentation, PreviousDesignName)
-    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & ORIGINAL_THEME_FILE_NAME
+    Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & GENERATED_THEME_FILE_NAME
     PreviousSlidemaster.Preserved = msoFalse
     ClearNonPlaceholderShapesFromLayoutsInLayoutDesignSection 'Otherwise shapes in layouts are duplicated
     App.Presentation.ApplyTheme CustomThemePath

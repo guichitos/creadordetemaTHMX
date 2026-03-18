@@ -9,7 +9,7 @@ Option Explicit
 
 Public Sub SyncLayoutsFromSampleSlidesShapesAndPlaceholders()
     UpdateBrandLogoInThumbnailLayout
-    UpdateAllBrandGraphics
+    UpdateAllBrandLogoGraphicsInSlides
     
     If App Is Nothing Then Set App = New App
 
@@ -75,7 +75,7 @@ Private Sub UpdateBrandLogoInThumbnailLayout()
     End If
 End Sub
 
-Private Sub UpdateAllBrandGraphics()
+Private Sub UpdateAllBrandLogoGraphicsInSlides()
 
     Dim PrimaryLogoName As String: PrimaryLogoName = BrandLogoImage.Name
     Dim PositiveMarkName As String: PositiveMarkName = "PositiveMark"
@@ -288,7 +288,7 @@ Private Sub SyncPlaceholderShapes(ByRef SampleSlide As PowerPoint.Slide)
     Dim SourceShape As PowerPoint.Shape
     For Each SourceShape In SampleSlide.Shapes
 
-        If Not IsPlaceholderShapeb(SourceShape) Then GoTo ContinueLoop
+        If Not IsPlaceholderShape(SourceShape) Then GoTo ContinueLoop
 
         Dim DestinationShape As PowerPoint.Shape
         Set DestinationShape = GetShapeByName(TargetLayout.Shapes, SourceShape.Name)
@@ -304,29 +304,68 @@ ContinueLoop:
 
 End Sub
 Private Sub CopyNonPlaceholderShapesToLayout(ByRef SampleSlide As PowerPoint.Slide)
+'Este procedimiento tiene un problema pega logo cuando no deberia
+'/**
+
+    Dim NonPlaceholderShapeCountInSlide As Integer: NonPlaceholderShapeCountInSlide = GetNonPlaceholderShapeCount(SampleSlide.Shapes)
 
 RetryCopyProcess:
 
     Dim TargetLayout As PowerPoint.CustomLayout: Set TargetLayout = SampleSlide.CustomLayout
 
+    Dim ShapesToCopy As PowerPoint.ShapeRange: Set ShapesToCopy = GetNonPlaceholderShapeRange(SampleSlide.Shapes)
+
+    If ShapesToCopy Is Nothing Then Exit Sub
+
+    Dim ShapeCount As Long: ShapeCount = ShapesToCopy.count
+
+    PasteShapeRangeToLayout ShapesToCopy, TargetLayout
+
+    If ShouldRetryCopyProcess(TargetLayout, ShapeCount) Then GoTo RetryCopyProcess
+
+End Sub
+Private Function ShouldRetryCopyProcess(ByRef TargetLayout As PowerPoint.CustomLayout, ByVal ExpectedShapeCount As Long) As Boolean
+
+    Dim LayoutNonPlaceholderCount As Long: LayoutNonPlaceholderCount = GetNonPlaceholderShapeCount(TargetLayout.Shapes)
+
+    If LayoutNonPlaceholderCount = ExpectedShapeCount Then Exit Function
+
+    Dim ShapeIndex As Long
+    For ShapeIndex = TargetLayout.Shapes.count To 1 Step -1
+        If Not IsPlaceholderShape(TargetLayout.Shapes(ShapeIndex)) Then
+            TargetLayout.Shapes(ShapeIndex).Delete
+        End If
+    Next ShapeIndex
+
+    Sleep 20
+    DoEvents
+
+    ShouldRetryCopyProcess = True
+
+End Function
+Private Function GetNonPlaceholderShapeRange(ByRef Shapes As PowerPoint.Shapes) As PowerPoint.ShapeRange
+
     Dim ShapeIndexes() As Long
     Dim ShapeCount As Long: ShapeCount = 0
 
     Dim ShapeIndex As Long
-    For ShapeIndex = 1 To SampleSlide.Shapes.count
-
-        If Not IsPlaceholderShapeb(SampleSlide.Shapes(ShapeIndex)) Then
+    For ShapeIndex = 1 To Shapes.count
+        Debug.Print Shapes(ShapeIndex).Name
+        Debug.Print IsPlaceholderShape(Shapes(ShapeIndex))
+        If Not IsPlaceholderShape(Shapes(ShapeIndex)) Then 'And Not IsBrandlogoShape(Shapes(ShapeIndex)) Then
             ShapeCount = ShapeCount + 1
             ReDim Preserve ShapeIndexes(1 To ShapeCount)
             ShapeIndexes(ShapeCount) = ShapeIndex
         End If
-
     Next ShapeIndex
 
-    If ShapeCount = 0 Then Exit Sub
+    If ShapeCount = 0 Then Exit Function
 
-    Dim ShapesToCopy As PowerPoint.ShapeRange
-    Set ShapesToCopy = SampleSlide.Shapes.Range(ShapeIndexes)
+    Set GetNonPlaceholderShapeRange = Shapes.Range(ShapeIndexes)
+
+End Function
+
+Private Sub PasteShapeRangeToLayout(ByRef ShapesToCopy As PowerPoint.ShapeRange, ByRef TargetLayout As PowerPoint.CustomLayout)
 
 CopyShapeSafely:
 
@@ -338,44 +377,11 @@ CopyShapeSafely:
 PasteShapeSafely:
 
     On Error GoTo PasteShapeNotReady
-    Dim PastedShapes As PowerPoint.ShapeRange
-    Set PastedShapes = TargetLayout.Shapes.Paste
+    Dim PastedShapes As PowerPoint.ShapeRange: Set PastedShapes = TargetLayout.Shapes.Paste
     DoEvents
     On Error GoTo 0
 
-'--------------------------------
-' VERIFICATION BY COUNT
-'--------------------------------
-
-    Dim LayoutNonPlaceholderCount As Long: LayoutNonPlaceholderCount = 0
-
-    For ShapeIndex = 1 To TargetLayout.Shapes.count
-        If Not IsPlaceholderShapeb(TargetLayout.Shapes(ShapeIndex)) Then
-            LayoutNonPlaceholderCount = LayoutNonPlaceholderCount + 1
-        End If
-    Next ShapeIndex
-
-    If LayoutNonPlaceholderCount <> ShapeCount Then
-
-        Debug.Print "*** COPY VERIFICATION FAILED - RETRYING ***"
-
-        'Eliminar non-placeholders del layout antes de reintentar
-        For ShapeIndex = TargetLayout.Shapes.count To 1 Step -1
-            If Not IsPlaceholderShapeb(TargetLayout.Shapes(ShapeIndex)) Then
-                TargetLayout.Shapes(ShapeIndex).Delete
-            End If
-        Next ShapeIndex
-
-        Sleep 20
-        DoEvents
-
-        GoTo RetryCopyProcess
-
-    End If
-
-    Debug.Print "*** NON PLACEHOLDER COPY VERIFIED ***"
-
-Exit Sub
+    Exit Sub
 
 CopyShapeNotReady:
     Sleep 10
@@ -386,6 +392,16 @@ PasteShapeNotReady:
     Resume PasteShapeSafely
 
 End Sub
+Private Function GetNonPlaceholderShapeCount(ByRef Shapes As PowerPoint.Shapes) As Long
+
+    Dim ShapeIndex As Long
+    For ShapeIndex = 1 To Shapes.count
+        If Not IsPlaceholderShape(Shapes(ShapeIndex)) Then
+            GetNonPlaceholderShapeCount = GetNonPlaceholderShapeCount + 1
+        End If
+    Next ShapeIndex
+
+End Function
 
 Public Function GetShapeByName(ByRef Shapes As PowerPoint.Shapes, ByVal ShapeName As String) As PowerPoint.Shape
     If Len(ShapeName) = 0 Then Exit Function
@@ -512,7 +528,7 @@ Public Sub ClearNonPlaceholderShapesFromLayout(ByRef TargetLayout As PowerPoint.
         Dim shp As PowerPoint.Shape
         Set shp = TargetLayout.Shapes(i)
 
-        If Not IsPlaceholderShapeb(shp) Then
+        If Not IsPlaceholderShape(shp) Then
             'shp.Select '/**
             'Debug.Print shp.Name
             shp.Delete
@@ -535,7 +551,7 @@ Public Function GetSectionIndexByName(ByRef presentationInstance As PowerPoint.P
     GetSectionIndexByName = -1
 
 End Function
-Public Function IsPlaceholderShapeb(ByRef Shape As PowerPoint.Shape) As Boolean
+Public Function IsPlaceholderShape(ByRef Shape As PowerPoint.Shape) As Boolean
 
     If Shape Is Nothing Then Exit Function
 
@@ -544,20 +560,35 @@ Public Function IsPlaceholderShapeb(ByRef Shape As PowerPoint.Shape) As Boolean
     'Shape.Select 'solo para debugueo
     On Error GoTo 0
 
-    If Shape.Type = msoPlaceholder Then IsPlaceholderShapeb = True: Exit Function
+    If Shape.Type = msoPlaceholder Then IsPlaceholderShape = True: Exit Function
 
     If InStr(1, Shape.Name, "Placeholder", vbTextCompare) > 0 Then
-        IsPlaceholderShapeb = True
+        IsPlaceholderShape = True
         Exit Function
     End If
 
     Err.Clear
     On Error Resume Next
     Dim PlaceholderType As Long: PlaceholderType = CLng(Shape.PlaceholderFormat.Type)
-    If Err.Number = 0 Then IsPlaceholderShapeb = True
+    If Err.Number = 0 Then IsPlaceholderShape = True
     On Error GoTo 0
 
 End Function
+
+Public Function IsBrandlogoShape(ByRef Shape As PowerPoint.Shape) As Boolean
+    If Shape Is Nothing Then Exit Function
+    
+    Dim ShapeName As String
+    ShapeName = Trim$(Shape.Name)
+    
+    Select Case ShapeName
+        Case "BrandLogoImage", "PositiveMark", "NegativeMark", "NegativeLogo"
+            IsBrandlogoShape = True
+        Case Else
+            IsBrandlogoShape = False
+    End Select
+End Function
+
 
 Private Sub VerifyLayoutsContainOnlyPlaceholders(ByRef ProcessedLayouts As Object)
 
@@ -571,7 +602,7 @@ Private Sub VerifyLayoutsContainOnlyPlaceholders(ByRef ProcessedLayouts As Objec
         Dim ShapeIndex As Long
 
         For ShapeIndex = 1 To TargetLayout.Shapes.count
-            If Not IsPlaceholderShapeb(TargetLayout.Shapes(ShapeIndex)) Then
+            If Not IsPlaceholderShape(TargetLayout.Shapes(ShapeIndex)) Then
                 Debug.Print "Non-placeholder found in layout: " & TargetLayout.Name
                 Exit Sub
             End If
@@ -595,7 +626,7 @@ Public Function AllNonPlaceholderShapesExistInLayout(ByRef SampleSlide As PowerP
 
     For Each SourceShape In SampleSlide.Shapes
 
-        If IsPlaceholderShapeb(SourceShape) Then GoTo ContinueLoop
+        If IsPlaceholderShape(SourceShape) Then GoTo ContinueLoop
 
         Dim LayoutShape As PowerPoint.Shape
         Set LayoutShape = GetShapeByName(TargetLayout.Shapes, SourceShape.Name)
