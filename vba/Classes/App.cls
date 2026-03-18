@@ -326,7 +326,6 @@ Private Sub MakeColorSectionDecisions()
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x4thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x5thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, x6thChartColorShape):           PowerPointUtilities.ShowBackGroundFillColorPicker
-        Case IsAPickedAccentColorShape(User.CurrentSelection):                                           PowerPointUtilities.ShowBackGroundFillColorPicker
 
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, HyperlinkTextBox)
             If User.CurrentSelection.Type = ppSelectionText Then HyperlinkTextBox.Select
@@ -374,7 +373,6 @@ End Sub
 
 Private Sub CopyCurrentColorPaletteToAlternativePalette(ByVal PaletteNumber As Integer)
     SetAlternativePalette PaletteNumber, BrandColorPalette
-    SetAlternativePaletteExtraColors PaletteNumber, GetTransformForPalette(PaletteNumber)
 End Sub
 
 Private Sub UpdateBrandColorsPalette()
@@ -393,12 +391,6 @@ Private Sub UpdateBrandColorsPalette()
     PaletteShapes(0)(11).Fill.ForeColor = HyperlinkTextBox.TextFrame.TextRange.Font.Color
     PaletteShapes(0)(12).Fill.ForeColor = VisitedHyperlinkTextBox.TextFrame.TextRange.Font.Color
 
-    Slide.Shapes("PaletteColorM0").Fill.ForeColor = Slide.Shapes("PickedAccentColor7").Fill.ForeColor
-    Slide.Shapes("PaletteColorN0").Fill.ForeColor = Slide.Shapes("PickedAccentColor8").Fill.ForeColor
-    Slide.Shapes("PaletteColorO0").Fill.ForeColor = Slide.Shapes("PickedAccentColor9").Fill.ForeColor
-    Slide.Shapes("PaletteColorP0").Fill.ForeColor = Slide.Shapes("PickedAccentColor10").Fill.ForeColor
-    Slide.Shapes("PaletteColorQ0").Fill.ForeColor = Slide.Shapes("PickedAccentColor11").Fill.ForeColor
-    Slide.Shapes("PaletteColorR0").Fill.ForeColor = Slide.Shapes("PickedAccentColor12").Fill.ForeColor
 End Sub
 
 Private Sub PutColorsInPickedColors()
@@ -424,7 +416,6 @@ Private Sub UseSuggestedAlternativePalettes()
                                                                     LongColor(.Accent5).AsLong, LongColor(.Accent6).AsLong, _
                                                                     LongColor(.Hyperlink).AsLong, LongColor(.VisitedHyperlink).AsLong, _
                                                                     .Mapping)
-        SetAlternativePaletteExtraColors 1, CopyTransform
         SetAlternativePalette 2, OfficeUtilities.GetColorPalette(.Name & " - gray scale", _
                                                                     LongColor(.Light1).ToGray.AsLong, LongColor(.Dark1).ToGray.AsLong, _
                                                                     LongColor(.Light2).ToGray.AsLong, LongColor(.Dark2).ToGray.AsLong, _
@@ -433,7 +424,6 @@ Private Sub UseSuggestedAlternativePalettes()
                                                                     LongColor(.Accent5).ToGray.AsLong, LongColor(.Accent6).ToGray.AsLong, _
                                                                     LongColor(.Hyperlink).ToGray.AsLong, LongColor(.VisitedHyperlink).ToGray.AsLong, _
                                                                     .Mapping)
-        SetAlternativePaletteExtraColors 2, GrayScaleTransform
         Dim d As Double: d = 0
 If False Then
         Dim DefaultMapping As ColorMapping
@@ -516,7 +506,6 @@ Else
                                                                     LongColor(.Accent5).InvertLightness.ChangeLightnessBy(d).AsLong, LongColor(.Accent6).InvertLightness.ChangeLightnessBy(d).AsLong, _
                                                                     LongColor(.Hyperlink).InvertLightness.ChangeLightnessBy(d).AsLong, LongColor(.VisitedHyperlink).InvertLightness.ChangeLightnessBy(d).AsLong, _
                                                                     .Mapping)
-        SetAlternativePaletteExtraColors 3, InvertLightnessTransform
         SetAlternativePalette 4, OfficeUtilities.GetColorPalette(.Name & " - inverted gray scale", _
                                                                     LongColor(.Light1).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, LongColor(.Dark1).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, _
                                                                     LongColor(.Light2).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, LongColor(.Dark2).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, _
@@ -525,25 +514,8 @@ Else
                                                                     LongColor(.Accent5).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, LongColor(.Accent6).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, _
                                                                     LongColor(.Hyperlink).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, LongColor(.VisitedHyperlink).InvertLightness.ChangeLightnessBy(d).ToGray.AsLong, _
                                                                     .Mapping)
-        SetAlternativePaletteExtraColors 4, InvertAndGrayScaleTransform
 End If
     End With
-End Sub
-
-Private Sub SetAlternativePaletteExtraColors(ByVal PaletteNumber As Integer, ByVal Transform As Integer)
-    Dim SourceNames As Variant
-    SourceNames = Array("PaletteColorM0", "PaletteColorN0", "PaletteColorO0", "PaletteColorP0", "PaletteColorQ0", "PaletteColorR0")
-
-    Dim TargetNames As Variant
-    TargetNames = Array("PaletteColorM" & PaletteNumber, "PaletteColorN" & PaletteNumber, "PaletteColorO" & PaletteNumber, "PaletteColorP" & PaletteNumber, "PaletteColorQ" & PaletteNumber, "PaletteColorR" & PaletteNumber)
-
-    Dim i As Integer
-    For i = LBound(SourceNames) To UBound(SourceNames)
-        Dim BaseColor As Long
-        BaseColor = Slide.Shapes(SourceNames(i)).Fill.ForeColor.Rgb
-
-        Slide.Shapes(TargetNames(i)).Fill.ForeColor.Rgb = TransformExtraColor(BaseColor, Transform)
-    Next i
 End Sub
 
 Private Function TransformExtraColor(ByVal BaseColor As Long, ByVal Transform As Integer) As Long
@@ -1282,16 +1254,6 @@ Private Function IsACustomColor(ByRef Selection As PowerPoint.Selection) As Bool
     Next Shape
     
     IsACustomColor = Result
-End Function
-
-Private Function IsAPickedAccentColorShape(ByRef Selection As PowerPoint.Selection) As Boolean
-    Dim i As Long
-    For i = 7 To 12
-        If PowerPointUtilities.AreTheSameShape(Selection, Slide.Shapes("PickedAccentColor" & i)) Then
-            IsAPickedAccentColorShape = True
-            Exit Function
-        End If
-    Next i
 End Function
 
 Private Property Get LogoShape() As PowerPoint.Shape
