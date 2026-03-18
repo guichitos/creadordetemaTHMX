@@ -21,13 +21,13 @@ Private Const ORIGINAL_THEME_FILE_NAME As String = "OriginalTheme.thmx"
 Private Const GENERATED_THEME_FILE_NAME As String = "Default theme.thmx"
 
 
-Private Sub •00InstatiationProcedures():                                                                            End Sub
+Private Sub â€¢00InstatiationProcedures():                                                                            End Sub
 
-Private Sub •00EventsProcedures():                                                                                  End Sub
+Private Sub â€¢00EventsProcedures():                                                                                  End Sub
 
-Private Sub •00PublicProcedures():                                                                                  End Sub
+Private Sub â€¢00PublicProcedures():                                                                                  End Sub
 
-Private Sub •00FriendProcedures():                                                                                  End Sub
+Private Sub â€¢00FriendProcedures():                                                                                  End Sub
 
 Friend Sub PreviewTheme()
     ActiveWindow.Selection.Unselect
@@ -133,7 +133,7 @@ Public Sub ResetValuesForLayoutFlow()
     App.CurrentSlideIndex = 0
 End Sub
 
-Private Sub •00PrivateProcedures():                                                                                 End Sub
+Private Sub â€¢00PrivateProcedures():                                                                                 End Sub
 
 Private Sub DeleteWorkingEnvironment()
 
@@ -215,7 +215,7 @@ Private Sub SetDefultShapesInCurrentTheme(Master As PowerPoint.Master)
     PowerPointUtilities.SetMastersDefaultShape App.DefaultThemeLine, Master
 End Sub
 
-Private Sub •00PythonSection():                                                                          End Sub
+Private Sub â€¢00PythonSection():                                                                          End Sub
 
 Private Function PythonLibraryIsInstalled() As Boolean
     Dim ShellObject As Object
@@ -344,6 +344,33 @@ Public Sub ApplySlideSizeFromMaster()
 
     TargetSlide.Shapes("MasterDimensions").TextFrame.TextRange.Text = BuildDimensionsText(RatioText, WidthInches, HeightInches, WidthCentimeters, HeightCentimeters)
 
+End Sub
+
+Public Sub UpdateMasterDimensionsFromMasterSize()
+    On Error GoTo CleanFail
+
+    Dim TargetSlide As Slide: Set TargetSlide = ActivePresentation.Slides(1)
+
+    Dim WidthPixels As Double: WidthPixels = GetShapeTextAsDouble(TargetSlide, "MasterWidth")
+    Dim HeightPixels As Double: HeightPixels = GetShapeTextAsDouble(TargetSlide, "MasterHeight")
+    If HeightPixels = 0 Then Exit Sub
+
+    Dim WidthPoints As Double: WidthPoints = ConvertPixelsToPoints(WidthPixels)
+    Dim HeightPoints As Double: HeightPoints = ConvertPixelsToPoints(HeightPixels)
+
+    Dim WidthInches As Double: WidthInches = ConvertPointsToInches(WidthPoints)
+    Dim HeightInches As Double: HeightInches = ConvertPointsToInches(HeightPoints)
+
+    Dim WidthCentimeters As Double: WidthCentimeters = ConvertInchesToCentimeters(WidthInches)
+    Dim HeightCentimeters As Double: HeightCentimeters = ConvertInchesToCentimeters(HeightInches)
+
+    Dim RatioText As String: RatioText = GetSimplifiedRatio(WidthPixels, HeightPixels)
+
+    TargetSlide.Shapes("MasterDimensions").TextFrame.TextRange.Text = BuildDimensionsText(RatioText, WidthInches, HeightInches, WidthCentimeters, HeightCentimeters)
+
+    Exit Sub
+
+CleanFail:
 End Sub
 Private Function GetShapeTextAsDouble(ByVal TargetSlide As Slide, ByVal ShapeName As String) As Double
     GetShapeTextAsDouble = CDbl(TargetSlide.Shapes(ShapeName).TextFrame.TextRange.Text)
