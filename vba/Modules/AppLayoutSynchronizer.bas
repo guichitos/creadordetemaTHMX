@@ -304,8 +304,6 @@ ContinueLoop:
 
 End Sub
 Private Sub CopyNonPlaceholderShapesToLayout(ByRef SampleSlide As PowerPoint.Slide)
-'Este procedimiento tiene un problema pega logo cuando no deberia
-'/**
 
     Dim NonPlaceholderShapeCountInSlide As Integer: NonPlaceholderShapeCountInSlide = GetNonPlaceholderShapeCount(SampleSlide.Shapes)
 
@@ -350,9 +348,7 @@ Private Function GetNonPlaceholderShapeRange(ByRef Shapes As PowerPoint.Shapes) 
 
     Dim ShapeIndex As Long
     For ShapeIndex = 1 To Shapes.count
-        Debug.Print Shapes(ShapeIndex).Name
-        Debug.Print IsPlaceholderShape(Shapes(ShapeIndex))
-        If Not IsPlaceholderShape(Shapes(ShapeIndex)) Then 'And Not IsBrandlogoShape(Shapes(ShapeIndex)) Then
+        If Not IsPlaceholderShape(Shapes(ShapeIndex)) Then
             ShapeCount = ShapeCount + 1
             ReDim Preserve ShapeIndexes(1 To ShapeCount)
             ShapeIndexes(ShapeCount) = ShapeIndex
@@ -362,6 +358,15 @@ Private Function GetNonPlaceholderShapeRange(ByRef Shapes As PowerPoint.Shapes) 
     If ShapeCount = 0 Then Exit Function
 
     Set GetNonPlaceholderShapeRange = Shapes.Range(ShapeIndexes)
+    
+'    '/* DEBUG
+'    Dim ResultShapeRange As PowerPoint.ShapeRange
+'    Set ResultShapeRange = GetNonPlaceholderShapeRange
+'    Debug.Print "Range shapes to copy"
+'    Dim ShapeIndexInRange As Long
+'    For ShapeIndexInRange = 1 To ResultShapeRange.count
+'        Debug.Print ResultShapeRange(ShapeIndexInRange).Name
+'    Next ShapeIndexInRange
 
 End Function
 
@@ -609,8 +614,6 @@ Private Sub VerifyLayoutsContainOnlyPlaceholders(ByRef ProcessedLayouts As Objec
         Next ShapeIndex
 
     Next LayoutKey
-
-    Debug.Print "*** TODOS LOS NO PLACEHOLDERS ELIMINADOS ***"
 
 End Sub
 

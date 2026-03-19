@@ -21,13 +21,13 @@ Private Const ORIGINAL_THEME_FILE_NAME As String = "OriginalTheme.thmx"
 Private Const GENERATED_THEME_FILE_NAME As String = "Default theme.thmx"
 
 
-Private Sub â€¢00InstatiationProcedures():                                                                            End Sub
+Private Sub •00InstatiationProcedures():                                                                            End Sub
 
-Private Sub â€¢00EventsProcedures():                                                                                  End Sub
+Private Sub •00EventsProcedures():                                                                                  End Sub
 
-Private Sub â€¢00PublicProcedures():                                                                                  End Sub
+Private Sub •00PublicProcedures():                                                                                  End Sub
 
-Private Sub â€¢00FriendProcedures():                                                                                  End Sub
+Private Sub •00FriendProcedures():                                                                                  End Sub
 
 Friend Sub PreviewTheme()
     ActiveWindow.Selection.Unselect
@@ -35,47 +35,29 @@ Friend Sub PreviewTheme()
     SyncLayoutsFromSampleSlidesShapesAndPlaceholders
     
     If App.IsWaitingForLayoutClick = True Then Exit Sub
+    
     ApplyStoredLanguageToSlideMaster
     ApplySlideSizeFromMaster
     ApplyDesiredFormatToAllDesignsUsingVba
+    
     DeleteWorkingEnvironment
     SaveToTemporaryFolderAsOriginalTheme
+    
     If Not PythonLibraryIsInstalled Then InstallPythonLibrary
     CreateOfficeThemeBasedOnOriginalThemeAndCallItCustomThemeUsingPython
-    Dim PreviousDesignName As String: PreviousDesignName = App.Slide.Design.Name
-    Dim PreviousSlidemaster As Design: Set PreviousSlidemaster = GetDesignByName(App.Presentation, PreviousDesignName)
+    
     Dim CustomThemePath As String: CustomThemePath = App.WorkingEnvironmentPath & GENERATED_THEME_FILE_NAME
+    
+    Dim PreviousSlidemaster As Design: Set PreviousSlidemaster = GetDesignByName(App.Presentation, App.Slide.Design.Name)
     PreviousSlidemaster.Preserved = msoFalse
+    
     ClearNonPlaceholderShapesFromLayoutsInLayoutDesignSection 'Otherwise shapes in layouts are duplicated
+    
     App.Presentation.ApplyTheme CustomThemePath
     ResetValuesForLayoutFlow
     App.ThemeFontsHeadingsFontShape.TextFrame.TextRange.Text = App.HeadingsAlternativeFontNameTextbox.TextFrame.TextRange.Text
     App.ThemeFontsBodyFontShape.TextFrame.TextRange.Text = App.BodyAlternativeFontNameTextbox.TextFrame.TextRange.Text
-    'RemoveBrandLogoImagesFromOriginalTheme 'Must be deleted
 End Sub
-Public Sub RemoveBrandLogoImagesFromOriginalTheme()
-
-    On Error GoTo CleanExit
-    If App Is Nothing Then Set App = New App
-    If App.Presentation Is Nothing Then Exit Sub
-
-    Dim TargetDesign As Design: Set TargetDesign = GetDesignByName(App.Presentation, "OriginalTheme")
-    If TargetDesign Is Nothing Then Exit Sub
-
-    Dim TargetMaster As Master: Set TargetMaster = TargetDesign.SlideMaster
-    If TargetMaster Is Nothing Then Exit Sub
-
-    RemoveBrandLogoImagesFromShapes TargetMaster.Shapes
-
-    Dim Layout As CustomLayout
-    For Each Layout In TargetMaster.CustomLayouts
-        RemoveBrandLogoImagesFromShapes Layout.Shapes
-    Next Layout
-
-CleanExit:
-End Sub
-
-
 Private Function GetDesignByName(ByVal TargetPresentation As Presentation, ByVal DesignName As String) As Design
 
     On Error GoTo CleanExit
@@ -90,8 +72,6 @@ Private Function GetDesignByName(ByVal TargetPresentation As Presentation, ByVal
 
 CleanExit:
 End Function
-
-
 Private Sub RemoveBrandLogoImagesFromShapes(ByVal TargetShapes As Shapes)
 
     On Error GoTo CleanExit
@@ -104,7 +84,6 @@ Private Sub RemoveBrandLogoImagesFromShapes(ByVal TargetShapes As Shapes)
 
 CleanExit:
 End Sub
-
 
 Private Sub RemoveBrandLogoImagesFromShape(ByVal TargetShape As Shape)
 
@@ -133,7 +112,7 @@ Public Sub ResetValuesForLayoutFlow()
     App.CurrentSlideIndex = 0
 End Sub
 
-Private Sub â€¢00PrivateProcedures():                                                                                 End Sub
+Private Sub •00PrivateProcedures():                                                                                 End Sub
 
 Private Sub DeleteWorkingEnvironment()
 
@@ -215,7 +194,7 @@ Private Sub SetDefultShapesInCurrentTheme(Master As PowerPoint.Master)
     PowerPointUtilities.SetMastersDefaultShape App.DefaultThemeLine, Master
 End Sub
 
-Private Sub â€¢00PythonSection():                                                                          End Sub
+Private Sub •00PythonSection():                                                                          End Sub
 
 Private Function PythonLibraryIsInstalled() As Boolean
     Dim ShellObject As Object
@@ -254,7 +233,7 @@ Private Sub CreateOfficeThemeBasedOnOriginalThemeAndCallItCustomThemeUsingPython
     End If
 
     Dim Command As String
-    Command = "python """ & App.localPath & "\Scripts\App_main.py"" """ & ThemeFilePathInTemp & """"
+    Command = "python """ & App.localPath & "\Scripts\App_main.py"" """ & ThemeFilePathInTemp & """ false"
     
     Debug.Print "Command passed to python:"
     Debug.Print Command
