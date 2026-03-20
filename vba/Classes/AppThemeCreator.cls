@@ -30,6 +30,7 @@ Friend Sub CreateTheme(ByVal OpenFolder As Boolean, Optional ByVal TimeStamp As 
     
     Dim folderPath As String
     folderPath = CreateBrandFolder(DestinationFolderPath, folderName)
+    CopyFontsFromFontFolderTo folderPath
     
     FontsToThemeBack ActivePresentation.Designs(1).SlideMaster
             
@@ -91,6 +92,77 @@ Friend Function ExportThemeWithCorporateFonts( _
     FontsToThemeBack ActivePresentation.Designs(1).SlideMaster
     
     ExportThemeWithCorporateFonts = ThemePath
+End Function
+
+
+Private Sub CopyFontsFromFontFolderTo(ByVal DestinationFolderPath As String)
+    Dim SourceFontsFolderPath As String
+    SourceFontsFolderPath = Trim$(App.FontFolderTextbox.TextFrame.TextRange.Text)
+    If Len(SourceFontsFolderPath) = 0 Then Exit Sub
+    If Not IsFolder(SourceFontsFolderPath) Then Exit Sub
+
+    Dim FontsDestinationFolderPath As String
+    FontsDestinationFolderPath = CreateFontsFolderInside(DestinationFolderPath)
+    If Len(FontsDestinationFolderPath) = 0 Then Exit Sub
+
+    Dim FontFiles As Collection
+    Set FontFiles = GetFiles(SourceFontsFolderPath, True, True, True)
+    If FontFiles Is Nothing Then Exit Sub
+
+    Dim FilePath As Variant
+    For Each FilePath In FontFiles
+        CopyFontFileToDestination CStr(FilePath), FontsDestinationFolderPath
+    Next FilePath
+End Sub
+
+Private Function CreateFontsFolderInside(ByVal DestinationFolderPath As String) As String
+    Dim FontsFolderPath As String
+    FontsFolderPath = DestinationFolderPath & "\fonts"
+
+    If CreateFolder(FontsFolderPath) Then
+        CreateFontsFolderInside = FontsFolderPath
+    End If
+End Function
+
+Private Sub CopyFontFileToDestination(ByVal SourceFilePath As String, ByVal DestinationFolderPath As String)
+    If Not IsFontFile(SourceFilePath) Then Exit Sub
+
+    Dim DestinationFilePath As String
+    DestinationFilePath = BuildUniqueFontDestinationPath(SourceFilePath, DestinationFolderPath)
+    CopyFile SourceFilePath, DestinationFilePath, False
+End Sub
+
+Private Function BuildUniqueFontDestinationPath(ByVal SourceFilePath As String, ByVal DestinationFolderPath As String) As String
+    Dim FileSystem As Object
+    Set FileSystem = CreateObject("Scripting.FileSystemObject")
+
+    Dim BaseName As String
+    BaseName = FileSystem.GetBaseName(SourceFilePath)
+
+    Dim ExtensionName As String
+    ExtensionName = FileSystem.GetExtensionName(SourceFilePath)
+
+    Dim DestinationFilePath As String
+    DestinationFilePath = DestinationFolderPath & "\" & FileSystem.GetFileName(SourceFilePath)
+
+    Dim Suffix As Long
+    Suffix = 1
+    Do While IsFile(DestinationFilePath)
+        DestinationFilePath = DestinationFolderPath & "\" & BaseName & " (" & Suffix & ")." & ExtensionName
+        Suffix = Suffix + 1
+    Loop
+
+    BuildUniqueFontDestinationPath = DestinationFilePath
+End Function
+
+Private Function IsFontFile(ByVal FilePath As String) As Boolean
+    Dim ExtensionName As String
+    ExtensionName = LCase$(CreateObject("Scripting.FileSystemObject").GetExtensionName(FilePath))
+
+    Select Case ExtensionName
+        Case "ttf", "otf", "ttc", "otc", "fon", "fnt", "pfb", "pfm", "woff", "woff2"
+            IsFontFile = True
+    End Select
 End Function
 
 Private Function CreateBrandFolder(ByVal ParentFolderPath As String, ByVal BrandFileName As String) As String
