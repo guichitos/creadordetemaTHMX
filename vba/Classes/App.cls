@@ -303,7 +303,8 @@ Private Sub MakeFontsSectionDecisions()
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, SeeFontNamesButton)
             ShowFontNamesInWindowsAndMacFontsList
 
-        Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, SearchForFontsFolderButton)
+        Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, FontFolderTextbox)
+            If User.CurrentSelection.Type = ppSelectionText Then FontFolderTextbox.Select
             SelectFontsFolder
             
         Case PowerPointUtilities.AreTheSameShape(User.CurrentSelection, WindowsAndMacFontsList) And User.CurrentSelection.Type = ppSelectionText
